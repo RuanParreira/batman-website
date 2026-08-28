@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { asset } from "../../lib/asset";
 
 const SignalCanvas = lazy(() => import("./SignalCanvas"));
 
@@ -58,7 +59,7 @@ export function Signal({ ready, tier }) {
     >
       <video
         ref={videoRef}
-        src="/video/video3.mp4"
+        src={asset("/video/video3.mp4")}
         muted
         loop
         playsInline

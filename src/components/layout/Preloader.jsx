@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap, useGSAP, ScrollTrigger, EASE } from "../../lib/gsap";
 import { BatMark } from "../Opening/BatMark";
+import { asset } from "../../lib/asset";
 
 /**
  * Preloader.
@@ -22,7 +23,7 @@ export function Preloader({ onComplete }) {
       const image = new Image();
       image.onload = resolve;
       image.onerror = resolve;
-      image.src = "/imgs/batarang.png";
+      image.src = asset("/imgs/batarang.png");
     });
     const floor = new Promise((resolve) => setTimeout(resolve, 900));
 

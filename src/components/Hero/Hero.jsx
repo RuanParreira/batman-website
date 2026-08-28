@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useGSAP } from "../../lib/gsap";
 import { GothamBed } from "../common/GothamBed";
 import { createHeroAnimation } from "../../animations/heroAnimation";
+import { asset } from "../../lib/asset";
 
 /**
  * Hero — Opcao A (texto a esquerda, personagem a direita).
@@ -62,7 +63,7 @@ export function Hero({ ready, tier }) {
           <video
             ref={videoRef}
             data-hero="portrait-video"
-            src="/video/hero.mp4"
+            src={asset("/video/hero.mp4")}
             aria-label="Batman sob a chuva em Gotham, virando para encarar a camera"
             muted
             playsInline

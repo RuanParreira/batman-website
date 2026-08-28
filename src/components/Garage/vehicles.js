@@ -9,13 +9,15 @@
  * `transform` e aplicado ao <primitive> do GLTF para normalizar escala e
  * assentamento no chao sem reexportar o asset.
  */
+import { asset } from "../../lib/asset";
+
 export const VEHICLES = [
   {
     id: "vengeance",
     name: "Vengeance",
     year: "2022",
     tag: "Muscle blindado",
-    model: "/models/vengeance.glb",
+    model: asset("/models/vengeance.glb"),
     accent: "#e11021",
     transform: { scale: 0.809, position: [0, 0.082, 0], rotation: [0, 0, 0] },
     specs: [
@@ -30,7 +32,7 @@ export const VEHICLES = [
     name: "Tumbler",
     year: "2005",
     tag: "Chassi tático",
-    model: "/models/tumbler.glb",
+    model: asset("/models/tumbler.glb"),
     accent: "#f2b53c",
     transform: { scale: 0.181, position: [0, 0.14, 0], rotation: [0, -Math.PI / 2, 0] },
     specs: [
@@ -45,7 +47,7 @@ export const VEHICLES = [
     name: "Wraith",
     year: "Protótipo",
     tag: "Perfil furtivo",
-    model: "/models/wraith.glb",
+    model: asset("/models/wraith.glb"),
     accent: "#7ea8ff",
     transform: { scale: 0.0226, position: [0, 0, 0], rotation: [0, -Math.PI / 2, 0] },
     specs: [
@@ -60,7 +62,7 @@ export const VEHICLES = [
     name: "Brawler",
     year: "2022",
     tag: "V8 artesanal",
-    model: "/models/thebatman.glb",
+    model: asset("/models/thebatman.glb"),
     accent: "#ff6a1a",
     transform: { scale: 0.487, position: [0, 0.7, 0], rotation: [0, -Math.PI / 2, 0] },
     specs: [

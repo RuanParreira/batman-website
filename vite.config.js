@@ -47,7 +47,13 @@ function notFoundFallback() {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // Repo de projeto no GitHub Pages (nao <usuario>.github.io): o build de
+  // producao fica em github.io/batman-website/, nao na raiz do dominio.
+  // So no build — em dev o server continua servindo em "/". Caminhos de
+  // asset em runtime usam `asset()` (src/lib/asset.js), que le esse mesmo
+  // valor via import.meta.env.BASE_URL.
+  base: command === "build" ? "/batman-website/" : "/",
   plugins: [react(), tailwindcss(), notFoundFallback()],
   build: {
     // Chunks separados por dominio. O grafo do WebGL so e alcancado pelo
@@ -67,4 +73,4 @@ export default defineConfig({
     },
     chunkSizeWarningLimit: 900,
   },
-});
+}));

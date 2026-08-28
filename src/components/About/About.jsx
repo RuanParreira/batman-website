@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useGSAP } from "../../lib/gsap";
+import { asset } from "../../lib/asset";
 import { ATTRIBUTES, IDENTITY, PARAGRAPHS } from "./dossier";
 import { createAboutAnimation } from "../../animations/aboutAnimation";
 
@@ -65,7 +66,7 @@ export function About({ ready }) {
             >
               <img
                 data-about="image"
-                src="/imgs/foto8.jpg"
+                src={asset("/imgs/foto8.jpg")}
                 alt="Batman de perfil diante do letreiro"
                 loading="lazy"
                 decoding="async"

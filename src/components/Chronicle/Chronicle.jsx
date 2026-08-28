@@ -3,6 +3,7 @@ import { useGSAP } from "../../lib/gsap";
 import { ChroniclePanel } from "./ChroniclePanel";
 import { CHAPTERS } from "./chapters";
 import { createChronicleAnimation } from "../../animations/chronicleAnimation";
+import { asset } from "../../lib/asset";
 
 export function Chronicle({ ready, tier }) {
   const root = useRef(null);
@@ -73,7 +74,7 @@ export function Chronicle({ ready, tier }) {
       >
         <img
           data-chronicle="quote-image"
-          src="/imgs/foto6.jpg"
+          src={asset("/imgs/foto6.jpg")}
           alt="Batman de costas diante de um letreiro monumental"
           loading="lazy"
           decoding="async"

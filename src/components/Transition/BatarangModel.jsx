@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { useGLTF } from "@react-three/drei";
+import { asset } from "../../lib/asset";
 
-const MODEL_URL = "/models/batarang.glb";
+const MODEL_URL = asset("/models/batarang.glb");
 
 /**
  * Carrega o .glb do batarang. Componente proprio porque `useGLTF` suspende

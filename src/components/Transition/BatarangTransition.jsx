@@ -1,6 +1,7 @@
 import { Suspense, lazy, useCallback, useRef, useState } from "react";
 import { useGSAP } from "../../lib/gsap";
 import { prefersReducedMotion } from "../../lib/device";
+import { asset } from "../../lib/asset";
 import { createBatarangTransitionAnimation } from "../../animations/batarangTransitionAnimation";
 
 // three + R3F saem do bundle inicial, mesmo criterio da Garagem/Sinal.
@@ -61,7 +62,7 @@ export function BatarangTransition({ ready, tier }) {
           style={{ clipPath: "inset(0% 100% 0% 0%)" }}
         >
           <img
-            src="/imgs/foto8.jpg"
+            src={asset("/imgs/foto8.jpg")}
             alt=""
             aria-hidden="true"
             loading="lazy"

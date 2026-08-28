@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { gsap, useGSAP, EASE } from "../../lib/gsap";
 import { revealChars, revertSplits } from "../../animations/text";
 import { useScrollTo } from "../../hooks/useScrollTo";
+import { asset } from "../../lib/asset";
 
 /**
  * Fecho da experiencia. Placeholder estrutural: e aqui que entram os
@@ -42,7 +43,7 @@ export function Outro({ ready }) {
     >
       <img
         data-outro="mark"
-        src="/imgs/foto2.jpg"
+        src={asset("/imgs/foto2.jpg")}
         alt="Logotipo de The Batman"
         loading="lazy"
         decoding="async"
