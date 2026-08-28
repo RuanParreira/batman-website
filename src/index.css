@@ -1,0 +1,145 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   DESIGN TOKENS — Gotham / The Batman
+   Base: preto absoluto + carvao. Acento primario: sangue (o vermelho
+   dominante em todos os assets fornecidos). Acento secundario: ouro,
+   reservado para HUD, numeracao e detalhes de interface.
+   ------------------------------------------------------------------ */
+@theme {
+  --font-display: "Anton", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Roboto Mono", monospace;
+
+  --color-void: #04050a;
+  --color-ink: #08090f;
+  --color-ash: #12131a;
+  --color-smoke: #24262f;
+  --color-fog: #83868f;
+  --color-bone: #e9e7e2;
+
+  --color-blood: #e11021;
+  --color-blood-deep: #6d0912;
+  --color-ember: #ff3a2d;
+  --color-gold: #f2b53c;
+  --color-gold-dim: #7d6425;
+
+  --ease-cine: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    background-color: var(--color-void);
+    scroll-behavior: auto;
+  }
+
+  html.is-loading,
+  html.is-loading body {
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-void);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-blood);
+    color: #fff;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  canvas {
+    display: block;
+    touch-action: pan-y;
+  }
+}
+
+@layer components {
+  /* Camada base do ScrollSmoother. Nada de position:sticky dentro dela —
+     usamos ScrollTrigger pin (o transform do smoother quebra sticky). */
+  #smooth-wrapper {
+    position: relative;
+  }
+
+  #smooth-content {
+    will-change: transform;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 0.88;
+    text-transform: uppercase;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--color-fog);
+  }
+
+  /* Camadas que so existem para composicao — nunca capturam ponteiro. */
+  .layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.42'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+
+  .vignette {
+    background: radial-gradient(
+      ellipse at 50% 46%,
+      transparent 32%,
+      rgba(4, 5, 10, 0.55) 72%,
+      rgba(4, 5, 10, 0.96) 100%
+    );
+  }
+
+  /* SplitText: mascara por linha.
+     A folga vertical existe porque `.display` roda com line-height < 1 e o
+     overflow:clip da mascara cortaria cedilhas, tis e acentos. O margin
+     negativo devolve o espaco ao fluxo. */
+  .display .split-line-mask {
+    padding-block: 0.16em;
+    margin-block: -0.16em;
+  }
+
+  /* Sem `will-change` permanente: o GSAP promove a camada durante o tween e
+     a solta depois. Mantido de forma fixa, o Chrome ja falhou a pintura do
+     primeiro caractere dentro do overflow:clip da mascara. */
+  .split-line {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
