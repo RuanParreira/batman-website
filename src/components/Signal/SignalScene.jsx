@@ -1,7 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
-import { useThree } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import "../shaders/DotMatrixMaterial";
+import { SIGNAL_TRAIL_POINTS } from "./signalConfig";
+
+// distancia minima (px) que o cursor precisa andar pra render um novo ponto
+// de rastro — parado, nenhum ponto novo entra e o rastro existente so
+// desaparece (ver uTrailLifetime), nunca fica uma "bola" acesa fixa. Baixo
+// o bastante pra fita ficar continua (sem "contas" espacadas) num movimento
+// normal de mouse.
+const TRAIL_MIN_DIST = 6;
 
 /**
  * Malha unica, tela cheia, ortografica — nao ha "objetos" alem dela. O
@@ -13,6 +21,50 @@ import "../shaders/DotMatrixMaterial";
  */
 export function SignalScene({ video, active, params }) {
   const { viewport, size, gl } = useThree();
+  const materialRef = useRef(null);
+  const trailRef = useRef([]); // fila de {x, y, t}, mais novo primeiro
+  const lastPointRef = useRef(null);
+
+  // O pointer do R3F ja acompanha o mouse sobre o canvas sozinho (sem
+  // listener manual). NDC (-1..1, y pra cima) e vUv (0..1, y pra cima) usam
+  // a mesma orientacao — so escala pra pixel de tela, sem inverter eixo.
+  useFrame((state) => {
+    const material = materialRef.current;
+    if (!material) return;
+
+    const { pointer, clock } = state;
+    const now = clock.elapsedTime;
+    const x = (pointer.x * 0.5 + 0.5) * size.width;
+    const y = (pointer.y * 0.5 + 0.5) * size.height;
+
+    const last = lastPointRef.current;
+    if (!last || Math.hypot(x - last.x, y - last.y) >= TRAIL_MIN_DIST) {
+      trailRef.current.unshift({ x, y, t: now });
+      if (trailRef.current.length > SIGNAL_TRAIL_POINTS) trailRef.current.length = SIGNAL_TRAIL_POINTS;
+      lastPointRef.current = { x, y };
+    }
+
+    // pop em vez de filter: a fila fica ordenada mais-novo-primeiro (unshift
+    // acima), entao pontos expirados sempre se acumulam no fim — sem isso
+    // seria uma alocacao de array nova a cada frame, pra sempre, enquanto a
+    // seccao estiver visivel.
+    const lifetime = params.uTrailLifetime;
+    const queue = trailRef.current;
+    while (queue.length && now - queue[queue.length - 1].t >= lifetime) queue.pop();
+
+    const positions = material.uTrailPos;
+    const ages = material.uTrailAge;
+    for (let i = 0; i < SIGNAL_TRAIL_POINTS; i++) {
+      const p = trailRef.current[i];
+      if (p) {
+        positions[i].set(p.x, p.y);
+        ages[i] = now - p.t;
+      } else {
+        positions[i].set(-9999, -9999);
+        ages[i] = lifetime + 1;
+      }
+    }
+  });
 
   const texture = useMemo(() => {
     const t = new THREE.VideoTexture(video);
@@ -57,6 +109,7 @@ export function SignalScene({ video, active, params }) {
     <mesh scale={[viewport.width, viewport.height, 1]}>
       <planeGeometry args={[1, 1]} />
       <dotMatrixMaterial
+        ref={materialRef}
         uVideo={texture}
         uResolution={resolution}
         uVideoResolution={videoRes}

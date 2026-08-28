@@ -15,20 +15,39 @@ import * as THREE from "three";
  * uBrightness  deslocamento de brilho (tipicamente -0.3..0.3) antes do
  *              threshold — empurra tudo mais claro ou mais escuro.
  * uIntensity   forca geral do efeito (0..1) — 0 apaga os pontos de vez.
+ * uGlowPower   curva do aceso dos pontos (expoente sobre a luminosidade,
+ *              tipicamente 1..3). Maior = so os pontos bem claros acendem
+ *              forte, resto fica mais apagado — leitura tipo LED
+ *              sobre-excitado em vez de degrade linear.
  * uDotColor    cor dos pontos.
  * uBgColor     cor do fundo, onde nao ha ponto.
+ * uTrailRadius   raio (px, sigma da gaussiana) de influencia de cada ponto
+ *                do rastro do mouse — maior = fita mais larga/macia.
+ * uTrailLifetime quanto tempo (segundos) um ponto do rastro dura ate sumir.
+ * uTrailSize     fracao (0..1) do raio maximo da bolinha que o rastro
+ *                sozinho consegue acender, mesmo sobre fundo escuro — 0
+ *                desliga o efeito por completo.
+ * uTrailGlow     quanto o rastro reforca o brilho por cima disso.
  */
 export const SIGNAL_BASE_PARAMS = {
   uPixelSize: 6.2,
   uDotScale: 0.8,
-  uThreshold: 0.08,
+  uThreshold: 0.05,
   uSoftness: 1.2,
-  uContrast: 1,
-  uBrightness: 0.1,
+  uContrast: 0.92,
+  uBrightness: 0.22,
   uIntensity: 1,
+  uGlowPower: 1.6,
   uDotColor: new THREE.Color("#ff2418"),
   uBgColor: new THREE.Color("#07050a"),
+  uTrailRadius: 32,
+  uTrailLifetime: 0.6,
+  uTrailSize: 0.9,
+  uTrailGlow: 0.4,
 };
+
+/** Quantos pontos de historico o rastro do mouse guarda (ver SignalScene). */
+export const SIGNAL_TRAIL_POINTS = 24;
 
 /**
  * O que muda por tier de dispositivo (ver useDeviceTier): so a densidade da

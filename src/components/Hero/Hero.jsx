@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useGSAP } from "../../lib/gsap";
 import { GothamBed } from "../common/GothamBed";
 import { createHeroAnimation } from "../../animations/heroAnimation";
@@ -6,14 +6,16 @@ import { createHeroAnimation } from "../../animations/heroAnimation";
 /**
  * Hero — Opcao A (texto a esquerda, personagem a direita).
  *
- * Escolha justificada no relatorio: `PossivelFotoHero.jpg` e a unica arte
- * vertical com o personagem deslocado e espaco negativo utilizavel, o que
- * permite uma composicao editorial real. As artes candidatas a fundo cheio
- * (`possivelFundodaHero.jpg`, `foto6.jpg`) trazem a palavra BATMAN gravada
- * no pixel e brigariam com a tipografia animada por SplitText.
+ * O retrato e um video (`/video/hero.mp4`, Batman virando para encarar a
+ * camera) em vez de imagem estatica. Fica parado no primeiro frame ate o
+ * proprio recorte da Opening terminar de revela-lo — `createOpeningAnimation`
+ * dispara um unico play() nesse instante. Disparar em `ready` (antes do
+ * scroll) tocaria o giro escondido atras do recorte fechado: o usuario so
+ * veria o resultado ja pronto quando o recorte finalmente abrisse.
  */
 export function Hero({ ready, tier }) {
   const root = useRef(null);
+  const videoRef = useRef(null);
 
   // A Hero e a primeira secao real da pagina — ja visivel e rolando desde o
   // scroll 0. A abertura (Opening) e um overlay fixo por cima dela; o
@@ -28,6 +30,16 @@ export function Hero({ ready, tier }) {
     },
     { scope: root, dependencies: [ready, tier], revertOnUpdate: true }
   );
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    // React tem um bug antigo (facebook/react#10389): o atributo `muted`
+    // no JSX nem sempre vira a PROPRIEDADE muted do DOM a tempo — sem
+    // estar genuinamente mutado o navegador recusa o play() programatico.
+    el.muted = true;
+    el.defaultMuted = true;
+  }, []);
 
   return (
     <section
@@ -47,32 +59,49 @@ export function Hero({ ready, tier }) {
           data-hero="portrait"
           className="relative h-full w-full max-w-[720px] lg:w-[50%] lg:max-w-none"
         >
-          <img
-            src="/imgs/PossivelFotoHero.jpg"
-            alt="Batman sob a chuva em Gotham"
+          <video
+            ref={videoRef}
+            data-hero="portrait-video"
+            src="/video/hero.mp4"
+            aria-label="Batman sob a chuva em Gotham, virando para encarar a camera"
+            muted
+            playsInline
+            preload="auto"
+            disablePictureInPicture
             draggable="false"
-            className="h-full w-full object-cover object-top"
+            className="h-full w-full object-cover"
             style={{
+              // o video tem uma faixa morta acima da cabeca; sobe o ponto
+              // de ancoragem do crop (object-top puro seria 50% 0%, que
+              // mostra essa faixa) pra cortar o vao e a figura ocupar mais
+              // do quadro
+              objectPosition: "50% 22%",
               maskImage:
                 "radial-gradient(76% 60% at 58% 38%, #000 34%, rgba(0,0,0,0.55) 68%, transparent 100%)",
               WebkitMaskImage:
                 "radial-gradient(76% 60% at 58% 38%, #000 34%, rgba(0,0,0,0.55) 68%, transparent 100%)",
             }}
           />
+          {/* sem preto solido no 0% de proposito — o brilho do GothamBed
+              (glow) e centrado bem nessa borda (50% da secao); um degrade
+              que comeca opaco cria um corte visivel contra o brilho por
+              tras. Comecar ja parcialmente transparente deixa a transicao
+              continua com o que esta atras */}
           <div
             className="layer"
             style={{
               background:
-                "linear-gradient(90deg, var(--color-void) 0%, rgba(4,5,10,0.72) 26%, rgba(4,5,10,0) 62%)",
+                "linear-gradient(90deg, rgba(4,5,10,0.5) 0%, rgba(4,5,10,0.62) 22%, rgba(4,5,10,0.3) 44%, rgba(4,5,10,0) 68%)",
             }}
           />
-          {/* o asset traz a palavra BATMAN gravada no rodape — este scrim
-              apaga a marca e assenta a figura no preto da secao */}
+          {/* assenta so a base da figura no preto da secao — sem precisar
+              esconder marca d'agua (o video, ao contrario do jpg antigo,
+              nao tem nada gravado no rodape) */}
           <div
             className="layer"
             style={{
               background:
-                "linear-gradient(0deg, var(--color-void) 0%, var(--color-void) 14%, rgba(4,5,10,0.72) 24%, rgba(4,5,10,0) 46%)",
+                "linear-gradient(0deg, rgba(4,5,10,0.55) 0%, rgba(4,5,10,0.24) 20%, rgba(4,5,10,0) 42%)",
             }}
           />
         </div>

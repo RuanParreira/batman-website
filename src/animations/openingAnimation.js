@@ -72,6 +72,7 @@ export function createOpeningAnimation(root, { tier = "high" } = {}) {
   const cta = heroQ('[data-hero="cta"]')[0];
   const meta = heroQ('[data-hero="meta"]');
   const portrait = heroQ('[data-hero="portrait"]')[0];
+  const portraitVideo = heroQ('[data-hero="portrait-video"]')[0];
 
   const splits = [];
   const softFocus = tier !== "low";
@@ -192,6 +193,7 @@ export function createOpeningAnimation(root, { tier = "high" } = {}) {
       // a Hero: ela continua real e visivel por baixo da placa, so nao
       // avanca no documento enquanto o buraco cresce.
       let navRevealed = false;
+      let videoTriggered = false;
 
       const diveTl = gsap.timeline({
         scrollTrigger: {
@@ -248,6 +250,19 @@ export function createOpeningAnimation(root, { tier = "high" } = {}) {
           { opacity: 0, scale: 1.14, xPercent: isMobile ? 0 : 4 },
           { opacity: 1, scale: 1, xPercent: 0, duration: 1.8 },
           0.15
+        )
+        // o retrato ja acabou de aparecer (fromTo acima termina em 1.95) —
+        // so agora dispara o giro do video, nunca durante o fade-in (senao o
+        // giro roda escondido e o usuario ve so o resultado ja pronto)
+        .call(
+          () => {
+            if (isReduced || videoTriggered || !portraitVideo) return;
+            videoTriggered = true;
+            const attempt = portraitVideo.play();
+            attempt?.catch?.(() => {});
+          },
+          [],
+          1.95
         )
         .fromTo(eyebrow, { opacity: 0 }, { opacity: 1, duration: 0.5 }, 0.25)
         .add(

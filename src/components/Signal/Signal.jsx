@@ -58,7 +58,7 @@ export function Signal({ ready, tier }) {
     >
       <video
         ref={videoRef}
-        src="/video/0828.mp4"
+        src="/video/video3.mp4"
         muted
         loop
         playsInline

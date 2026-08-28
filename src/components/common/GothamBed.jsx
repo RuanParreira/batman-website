@@ -22,18 +22,6 @@ export function GothamBed({ className = "", intensity = 1 }) {
         }}
       />
 
-      {/* Profundidade 2 — textura de cidade / chuva vermelha */}
-      <div
-        className="layer bg-cover bg-center"
-        data-bed="texture"
-        style={{
-          backgroundImage: "url('/imgs/foto10.jpg')",
-          opacity: 0.24 * intensity,
-          filter: "blur(6px) saturate(0.8) contrast(1.25)",
-          transform: "scale(1.2)",
-        }}
-      />
-
       {/* Profundidade 1 — chuva em movimento */}
       <div
         className="layer"
